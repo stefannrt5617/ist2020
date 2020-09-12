@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<!DOCTYPE Oglasi SYSTEM "oglasi.dtd">
+<Oglasi xmlns="http://www.w3schools.com"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.w3schools.com oglasi.xsd">
+    <Oglas>
+        <Kategorija>
+            Automobil
+        </Kategorija>
+
+        <DatumIsteka>   
+            <Dan>1</Dan>
+            <Mesec>7</Mesec>
+            <Godina>2020</Godina>
+        </DatumIsteka>
+
+        <Cena valuta='DIN'>
+            200000
+        </Cena>
+
+        <Tekst>
+            Auto Opel Astra G 2004 godiste na prodaju.
+        </Tekst>
+
+        <Oznaka>
+            auto
+        </Oznaka>
+
+        <Email tip='privatni'>milanmilenkovic91@hotmail.com</Email>
+
+        <Email tip='sluzbeni'>milanmilenkovic991@gmail.com</Email>
+
+    </Oglas>
+
+      <Oglas>
+        <Kategorija>
+            Instrumenti
+        </Kategorija>
+
+        <DatumIsteka>   
+            <Dan>1</Dan>
+            <Mesec>9</Mesec>
+            <Godina>2020</Godina>
+        </DatumIsteka>
+
+        <Cena valuta='DIN'>
+            50000
+        </Cena>
+
+        <Tekst>
+            Fender elektricna Gitara na prodaju.
+        </Tekst>
+
+        <Oznaka>
+            instrument
+        </Oznaka>
+
+        <Oznaka>
+
+            gitara
+        </Oznaka>
+
+        <Email tip='privatni'>jovanjovanovic1993@live.com</Email>
+
+    </Oglas>
+
+      <Oglas>
+        <Kategorija>
+            Alati
+        </Kategorija>
+
+        <DatumIsteka>   
+            <Dan>1</Dan>
+            <Mesec>8</Mesec>
+            <Godina>2020</Godina>
+        </DatumIsteka>
+
+        <Cena valuta='DIN'>
+            25000
+        </Cena>
+
+        <Tekst>
+            Kosilica Nova na prodaju.
+        </Tekst>
+
+        <Oznaka>
+            kosilica
+        </Oznaka>
+
+        <Oznaka>
+            domacinstvo
+        </Oznaka>
+
+        <Email tip='privatni'>milosradovic@gmail.com</Email>
+
+    </Oglas>
+
+
+</Oglasi>
+
+
+
