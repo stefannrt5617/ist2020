@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dodaj Oglas</title>
+
+    <style>
+        
+    
+        body {
+            background: #d46a6a ;
+        }
+
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .header{
+            background: #AA3939;
+            margin-bottom: 12px;
+        }
+
+        .header nav a {
+            color: #fff;
+            padding-right: 5px;
+            font-size: 20px;
+            text-decoration: none;
+            transition: color .2s ease-in;
+        }
+
+        .header a:hover{
+            color: #53dbdb;
+;
+        }
+
+        .container{
+            padding: 18px;
+        }
+        form {
+            margin: 0 auto;
+            width: 60%;
+            text-align: center;
+            padding: 15px;
+            color: #fff;
+            background: #53dbdb;
+            border-radius: 3px;
+        }
+
+        .formEl {
+            margin-bottom: 10px;
+        }
+
+        .formEl > *:not(textarea){
+            width: 150px;
+        }
+
+        .formEl label {
+            display: inline-block;
+            width: 100px;
+            margin-right: 10px;
+        }
+
+        form input {
+            padding: 7px;
+            outline: none;
+            border: none;
+            border-radius: 3px;
+        }
+
+        #textarea{
+            border: none;
+            outline: none;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 12px 22px;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            border-radius: 3px;
+            transition: all .2s ease-in;
+
+        }
+
+        .btn:hover {
+            background:rgb(99, 204, 173);
+            color: #fff;
+        }
+
+        .active {
+            color: #53dbdb !important;
+        }
+    </style>
+
+</head>
+<body>
+    <header class="header">
+            <div class="container">
+                <nav>
+                    <a href="/oglasi">Pocetna</a>
+                    <a class='active' href="/dodajOglas">Dodaj Oglas</a>
+                    <a href="/izmeniOglas">Izmeni Oglas</a>
+                </nav>
+            </div>
+
+    </header>
+    <div class="container">
+        <h1 style='text-align: center; margin-bottom: 12px'>Dodaj Oglas</h1>
+        <form id='forma'  method='POST'>  <!--dodaj-oglas -->
+            <div class="formEl" id='kategorija'>
+                <!-- <label>Kategorija:</label> <input type="text" name="kategorija" required> -->
+            </div>
+            <div class="formEl">
+                <label>Cena:</label> <input type="number" name="cena" min=0 required>
+            </div>
+
+            <div class="formEl">
+               <label>Valuta: </label> 
+               <span style='display: inline-block; text-align: left;'>
+                <input type="radio" checked name='valuta' value='DIN'>DIN
+                <input type="radio" name='valuta' value='EUR'>EUR
+               </span>
+              
+            </div>
+            <div class="formEl">
+                <label>Oznaka:</label> <input type="text" id='oznaka' name="oznaka"  required>
+            </div>
+            <div class="formEl">
+                <label>Datum Isteka:</label> <input type="date" name="datumIsteka" required>
+            </div>
+            <div class="formEl">
+                <label>Email:</label> <input type="email" multiple name="email"  required>
+            </div>
+            <div class="formEl">
+                <textarea name="tekst" id='textarea' cols="60" rows="10" placeholder="Tekst..." required></textarea>
+            </div>
+
+            <div class="formEl">
+                <button class='btn' type='submit'>Kreiraj Oglas</button>
+            </div>
+        
+        </form>
+
+    </div>
+    
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+    <script>
+        let kategorija = document.getElementById('kategorija');
+        let forma = document.getElementById('forma');
+
+        forma.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            let kategorija = document.forms.forma[0].value;
+            let cena = document.forms.forma[1].value;
+            let valuta = document.forms.forma[2].checked ? document.forms.forma[2].value :  document.forms.forma[3].value;
+            let oznaka = document.forms.forma[4].value;
+            let datumIsteka = document.forms.forma[5].value;
+            let email = document.forms.forma[6].value;
+            let tekst = document.forms.forma[7].value;
+
+            if(kategorija == 'null') return;
+
+            data = {
+                kategorija: kategorija,
+                cena:cena,
+                valuta: valuta,
+                oznaka: oznaka,
+                datumIsteka: datumIsteka,
+                email: email,
+                tekst: tekst
+            };
+
+            $.ajax({
+                url:'/dodaj-oglas',
+                type: 'POST',
+                dataType: 'json',
+                data: data,
+                success: function(response) {
+                    location.assign(response);
+                },
+            });
+
+
+
+        })
+
+        $.ajax({
+                url:'/api/kategorije',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response){
+                    prikazPodataka(response);
+                }
+            });
+
+
+            function prikazPodataka(kategorije) {
+                    let html = `<label>Kategorija: </label><select id='kat'><option value=null>--Izaberite kategoriju</option>`;
+                    for(let i = 0; i < kategorije.length; i++) {
+                        html += `<option value=${kategorije[i]}>${kategorije[i]}</option>`;
+
+                    }
+
+                    html += `</select>`;
+                    kategorija.innerHTML = html;
+            }
+
+
+    </script>
+
+</body>
+</html>

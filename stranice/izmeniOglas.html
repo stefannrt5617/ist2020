@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Izmeni Oglas</title>
+
+    <style>
+          *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .header{
+            background: #ac2424;
+            margin-bottom: 12px;
+        }
+
+        .header nav a {
+            color: #fff;
+            padding-right: 5px;
+            font-size: 20px;
+            text-decoration: none;
+            transition: color .2s ease-in;
+        }
+
+        .header a:hover{
+            color: #53dbdb;
+;
+        }
+
+        .container{
+            padding: 18px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+        th,td {
+            padding: 5px 12px;
+        }
+
+        tr:nth-child(odd) {
+            background: lightgrey;
+        }
+
+        .btn {
+            background: lightsalmon;
+            color: #fff;
+            border: none;
+            outline: none;
+            padding: 8px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .oglasi {
+            margin-bottom: 12px;
+        }
+
+        form {
+            width: 60%;
+            padding: 15px;
+            color: #fff;
+            background: rgb(230, 199, 187);
+            border-radius: 3px;
+        }
+
+        .formEl {
+            margin-bottom: 10px;
+        }
+
+        .formEl > *:not(textarea){
+            width: 150px;
+        }
+
+        .formEl label {
+            display: inline-block;
+            width: 100px;
+            margin-right: 10px;
+        }
+
+        form input {
+            padding: 7px;
+            outline: none;
+            border: none;
+            border-radius: 3px;
+        }
+
+        textarea{
+            border: none;
+            outline: none;
+        }
+
+        .active {
+            color: #53dbdb !important;
+        }
+
+
+        
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav>
+                <a href="/oglasi">Pocetna</a>
+                <a href="/dodajOglas">Dodaj Oglas</a>
+                <a class='active' href="/izmeniOglas">Izmeni Oglas</a>
+            </nav>
+        </div>
+
+    </header>
+
+    <div class="container">
+        <h3 style='margin-bottom: 12px'>Izaberite Oglas</h3>
+     
+        <div class="oglasi">
+        </div>
+
+        <div class="formaIzmena">
+
+        </div>
+
+    </div>
+       
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+          
+            $(document).ready(function(){
+                $.ajax({
+                    url:'/api/svi-oglasi',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response){
+                        prikazPodataka(response);
+                    }
+                });
+            });
+            
+
+            function prikazPodataka(response){
+                let div = document.querySelector(".oglasi");
+                div.innerHTML = "";
+
+                let html = `
+                    <table>
+                        <thead>
+                            <tr style='background: #fff'>
+                                <th>Kategorija</th>
+                                <th>Tekst</th>
+                                <th>Cena</th>
+                                <th>Valuta</th>
+                                <th>Oznaka</th>
+                                <th>Datum Isteka</th>
+                                <th>Email</th>
+                                <th>Izmena</th>
+                            </tr>
+                        <thead>
+                        <tbody>
+                `;
+                for(let o of response){
+                    html += `
+                        <tr>
+                            <td>${o.kategorija}</td>
+                            <td>${o.tekst}</td>
+                            <td>${o.cena}</td>
+                            <td>${o.valuta}</td>
+                            <td>${o.oznaka}</td>
+                            <td>${o.datumIsteka}</td>
+                            <td>${o.email}</td>
+                            <td>
+                                    <input type='hidden' id='ID' value='${o.id}'>
+                                    <button class='btn' onclick=pripremiOglas(${o.id}) type='submit'>Izmeni</td>
+                            </td>
+                        </tr>
+                    `;
+                }
+                html += `
+                        </tbody>
+                    </table>
+                `;
+                div.innerHTML = html;
+          
+           
+        }
+
+        function pripremiOglas(id){
+                  
+                    $.ajax({
+                        url:'/pripremi-oglas',
+                        type: 'POST',
+                        data: {id: id},
+                        dataType: 'json',
+                        success: function(response){
+                            popuniFormu(response, response['kategorije']);
+                        }
+                    });
+        }
+
+        function popuniFormu(oglas, kategorije) {
+            
+            let div = document.querySelector('.formaIzmena');
+            div.innerHTML = "";
+            let kateg = "<select name='kategorija'>";
+            for(let i = 0; i < kategorije.length; i++) {
+                if(kategorije[i] == oglas.kategorija) {
+                    kateg +=`<option value=${kategorije[i]} selected>${kategorije[i]}</option>`;
+                } else {
+                    kateg +=`<option value=${kategorije[i]}>${kategorije[i]}</option>`;
+                }   
+               
+            }
+
+            kateg += "</select>";
+            
+
+            let html = `
+            <h2 style='margin-bottom:12px;'>Izmenite Oglas</h2>
+            <form action="/izmeni-oglas" method='POST'>
+                <input type='hidden' name='id' value='${oglas.id}'>
+                <div class="formEl">
+                   <label>Kategorija: </label> ${kateg}
+                </div>
+                <div class="formEl">
+                    <label>Cena:</label> <input type="number" value=${oglas.cena} name="cena" min=0 required>
+                </div>
+
+                <div class='formEl'>
+                    <label>Valuta: </label> 
+                    <span style='display: inline-block; text-align: left;'>
+                        <input type="radio" ${oglas.valuta == "DIN" ? 'checked' : ""} name='valuta' value='DIN'>DIN
+                        <input type="radio" ${oglas.valuta == "EUR" ? 'checked' : ""} name='valuta' value='EUR'>EUR
+                    </span>
+
+                </div>
+                <div class="formEl">
+                    <label>Oznaka:</label> <input type="text" value=${oglas.oznaka} name="oznaka" required>
+                </div>
+                <div class="formEl">
+                    <label>Datum Isteka:</label> <input type="date" value=${oglas.datumIsteka} name="datumIsteka" required>
+                </div>
+                <div class="formEl">
+                    <label>Email:</label> <input type="email" multiple value=${oglas.email} name="email"  required>
+                </div>
+                <div class="formEl">
+                    <textarea name="tekst" cols="60" rows="10" placeholder="Tekst..." required>${oglas.tekst}</textarea>
+                </div>
+
+                <div class="formEl">
+                    <button class='btn' type='submit'>Izmeni Oglas</button>
+                </div>
+        
+            </form>
+
+            `;
+
+            
+
+            div.innerHTML = html;
+        }
+        </script>
+</body>
+</html>

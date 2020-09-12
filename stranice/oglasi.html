@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"> 
+    <title>Oglasi</title>
+
+    <style>
+    
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .header{
+            background: #ac2424;
+            margin-bottom: 12px;
+        }
+
+        .header nav a {
+            color: #fff;
+            padding-right: 5px;
+            font-size: 20px;
+            text-decoration: none;
+            transition: color .2s ease-in;
+        }
+
+        .header a:hover{
+            color: #53dbdb;
+;
+        }
+
+
+        .container{
+            padding: 18px;
+        }
+
+        .formEl {
+            margin-bottom: 12px;
+        }
+
+        form input {
+            padding: 5px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+        th,td {
+            padding: 5px 12px;
+        }
+
+        tr:nth-child(odd) {
+            background: lightgrey;
+        }
+
+        .btnObrisi {
+            background: lightsalmon;
+            color: #fff;
+            border: none;
+            outline: none;
+            padding: 8px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .active {
+            color: #53dbdb !important;
+        }
+
+    </style>
+
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav>
+                <a class='active' href="/oglasi">Pocetna</a>
+                <a href="/dodajOglas">Dodaj Oglas</a>
+                <a href="/izmeniOglas">Izmeni Oglas</a>
+            </nav>
+        </div>
+
+    </header>
+    <div class="container">
+        <form>
+            <div class="formEl">
+               <input id='tekst' type="text" name='tekst' placeholder='Pretraga...'> 
+            </div>
+            
+        </form>
+
+        <div class="oglasi">
+
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+
+         let tekst = document.getElementById('tekst');
+
+         tekst.addEventListener('input', function(e){
+            data = {
+             tekst: this.value
+            };
+
+            $.ajax({
+                url:'/api/filtriranje',
+                type: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function(response){
+                    prikazPodataka(response);
+                }
+            });
+         });
+            
+
+         $(document).ready(function(){
+            $.ajax({
+                url:'/api/svi-oglasi',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response){
+                    prikazPodataka(response);
+                }
+            });
+        });
+       
+        function prikazPodataka(response){
+            let div = document.querySelector(".oglasi");
+            div.innerHTML = "";
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr style='background: #fff'>
+                            <th>Kategorija</th>
+                            <th>Tekst</th>
+                            <th>Cena</th>
+                            <th>Valuta</th>
+                            <th>Oznaka</th>
+                            <th>Datum Isteka</th>
+                            <th>Email</th>
+                            <th>Brisanje</th>
+                        </tr>
+                    <thead>
+                    <tbody>
+            `;
+            for(let o of response){
+                html += `
+                    <tr>
+                        <td>${o.kategorija}</td>
+                        <td>${o.tekst}</td>
+                        <td>${o.cena}</td>
+                        <td>${o.valuta}</td>
+                        <td>${o.oznaka}</td>
+                        <td>${o.datumIsteka}</td>
+                        <td>${o.email}</td>
+                        <td>
+                            <form action='/obrisi-oglas' method='POST'>
+                                <input type='hidden' name='id' value='${o.id}'>
+                                <button class='btnObrisi' type='submit'>Obrisi</td>
+                            </form>
+                        </td>
+                    </tr>
+                `;
+            }
+            html += `
+                    </tbody>
+                </table>
+            `;
+            div.innerHTML = html;
+           
+        }
+    </script>
+</body>
+</html>
